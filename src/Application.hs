@@ -44,6 +44,12 @@ import Handler.Common
 import Handler.Home
 import Handler.Comment
 import Handler.Profile
+import Handler.CreateUser
+import Handler.CreateProduct
+import Handler.CreateCategory
+import Handler.CreateCategory
+import Handler.ProductSearch
+import Handler.Products
 
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the

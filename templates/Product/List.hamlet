@@ -1,0 +1,29 @@
+<div .container>
+    <h2>
+        Products
+    $if null products
+        <p> No products available.
+    $else
+        <table .table .table-responsive .table-hover>
+            <thead>
+                <th> Product name
+                <th> Description
+                <th> Category
+                <th> Specifications
+                <th> Price
+
+        $forall Entity _ product <- products
+            <tbody>
+                <tr>
+                    <td>
+                        #{productName product}
+                    <td>
+                        #{productDescription product}
+                    <td>
+                        #{productCategory product}
+                    <td>
+                        #{productSpecifications product}
+                    <td>
+                        #{productPrice product}
+
+

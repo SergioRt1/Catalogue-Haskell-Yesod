@@ -12,3 +12,13 @@
 /comments CommentR POST
 
 /profile ProfileR GET
+
+/productSearch ProductSearchR GET POST
+
+/createUser CreateUserR GET POST
+
+/createCategory CreateCategoryR GET POST
+
+/createProduct CreateProductR GET POST
+
+/products ProductsR GET
