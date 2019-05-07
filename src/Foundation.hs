@@ -18,10 +18,12 @@ import Control.Monad.Logger (LogSource)
 
 -- Used only when in "auth-dummy-login" setting is enabled.
 import Yesod.Auth.Dummy
+import Yesod.Auth.OAuth2.Google
 
 import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
 import Yesod.Default.Util   (addStaticContentExternal)
 import Yesod.Core.Types     (Logger)
+import qualified Data.List as L
 import qualified Yesod.Core.Unsafe as Unsafe
 import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
@@ -47,6 +49,14 @@ data MenuItem = MenuItem
 data MenuTypes
     = NavbarLeft MenuItem
     | NavbarRight MenuItem
+
+-- Replace with Google client ID.
+clientId :: Text
+clientId = "470222495413-vcgsp0mf349oendmuqf1ml8fjsten4ue.apps.googleusercontent.com"
+
+-- Replace with Google secret ID.
+clientSecret :: Text
+clientSecret = "lG65PbTraQE_EpTYOkCQDrmn"
 
 -- This is where we define all of the routes in our application. For a full
 -- explanation of the syntax, please see:
@@ -166,15 +176,19 @@ instance Yesod App where
     isAuthorized FaviconR _ = return Authorized
     isAuthorized RobotsR _ = return Authorized
     isAuthorized (StaticR _) _ = return Authorized
-    isAuthorized CreateProductR  _ = return Authorized
-    isAuthorized CreateCategoryR  _ = return Authorized
     isAuthorized CreateUserR  _ = return Authorized
-    isAuthorized ProductSearchR  _ = return Authorized
-    isAuthorized ProductsR  _ = return Authorized
 
     -- the profile route requires that the user is authenticated, so we
     -- delegate to that function
     isAuthorized ProfileR _ = isAuthenticated
+
+    isAuthorized ProductSearchR  _ = authorizedForPrivileges [PrvSearch]
+    isAuthorized ProductsR  _ = authorizedForPrivileges [PrvSearch]
+
+    isAuthorized CreateProductR  _ = authorizedForPrivileges [PrvCreateProduct]
+    isAuthorized CreateCategoryR  _ = authorizedForPrivileges [PrvCreateCategory]
+
+    isAuthorized ChangePrivilegesUserR  _ = authorizedForPrivileges [PrvChangePrivilegesUser]
 
     -- This function creates static content files in the static folder
     -- and names them based on a hash of their content. This allows
@@ -259,13 +273,12 @@ instance YesodAuth App where
             Nothing -> Authenticated <$> insert User
                 { userIdent = credsIdent creds
                 , userPassword = Nothing
+                , userPerms = [PrvSearch]
                 }
 
     -- You can add other plugins like Google Email, email or OAuth here
     authPlugins :: App -> [AuthPlugin App]
-    authPlugins app = [authOpenId Claimed []] ++ extraAuthPlugins
-        -- Enable authDummy login if enabled.
-        where extraAuthPlugins = [authDummy | appAuthDummyLogin $ appSettings app]
+    authPlugins app = [oauth2GoogleScoped ["email", "profile"] clientId clientSecret]
 
 -- | Access function to determine if a user is logged in.
 isAuthenticated :: Handler AuthResult
@@ -274,6 +287,19 @@ isAuthenticated = do
     return $ case muid of
         Nothing -> Unauthorized "You must login to access this page"
         Just _ -> Authorized
+
+authorizedForPrivileges :: [Privileges] -> Handler AuthResult
+authorizedForPrivileges perms = do
+    mu <- maybeAuth
+    return $ case mu of
+     Nothing -> Unauthorized "You must login to access this page"
+     Just u@(Entity userId user) ->
+       if hasPrivileges u perms
+            then Authorized
+            else Unauthorized "Not enought priviledges"
+
+hasPrivileges :: Entity User -> [Privileges] -> Bool
+hasPrivileges (Entity _ user) perms = null (perms L.\\ userPerms user)
 
 instance YesodAuthPersist App
 

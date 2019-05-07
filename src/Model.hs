@@ -18,3 +18,14 @@ import Database.Persist.Quasi
 -- http://www.yesodweb.com/book/persistent/
 share [mkPersist sqlSettings, mkMigrate "migrateAll"]
     $(persistFileWith lowerCaseSettings "config/models")
+
+
+data Privileges
+    = PrvCreateProduct
+    | PrvCreateCategory
+    | PrvSearch
+    | PrvChangePrivilegesUser
+    | PrvAPI
+    deriving (Show,Read,Eq)
+
+derivePersistField "Privileges"

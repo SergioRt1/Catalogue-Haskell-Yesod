@@ -22,3 +22,5 @@
 /createProduct CreateProductR GET POST
 
 /products ProductsR GET
+
+/changePrivilegesUser ChangePrivilegesUserR GET POST
