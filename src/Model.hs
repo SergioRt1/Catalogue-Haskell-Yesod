@@ -25,7 +25,6 @@ data Privileges
     | PrvCreateCategory
     | PrvSearch
     | PrvChangePrivilegesUser
-    | PrvAPI
     deriving (Show,Read,Eq)
 
 derivePersistField "Privileges"
