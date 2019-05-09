@@ -22,3 +22,7 @@
 /createProduct CreateProductR GET POST
 
 /changePrivilegesUser ChangePrivilegesUserR GET POST
+
+/favorites FavoritesR GET
+
+/addFavorite AddFavoriteR GET POST

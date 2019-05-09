@@ -8,6 +8,12 @@ createdb catalogue-haskell
 createdb catalogue-haskell_test
 ```
 
+To make an user Admin run the following command in postgresql
+```
+UPDATE public."user" SET perms = '["sPrvSearch","sPrvChangePrivilegesUser"]'
+WHERE id = {userID};
+```
+
 ## Haskell Setup
 
 1. If you haven't already, [install Stack](https://haskell-lang.org/get-started)

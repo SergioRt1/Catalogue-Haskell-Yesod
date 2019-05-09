@@ -5,4 +5,4 @@
         <div .row .clearfix .visible-xs-block>
         <button .btn .btn-success>
            <span .glyphicon .glyphicon-floppy-saved>
-           default text create
+           Accept

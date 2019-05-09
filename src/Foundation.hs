@@ -193,6 +193,8 @@ instance Yesod App where
 
     isAuthorized ProductSearchR  _ = authorizedForPrivileges [PrvSearch]
     isAuthorized ProductsR  _ = authorizedForPrivileges [PrvSearch]
+    isAuthorized AddFavoriteR  _ = authorizedForPrivileges [PrvSearch]
+    isAuthorized FavoritesR  _ = authorizedForPrivileges [PrvSearch]
 
     isAuthorized CreateProductR  _ = authorizedForPrivileges [PrvCreateProduct]
     isAuthorized CreateCategoryR  _ = authorizedForPrivileges [PrvCreateCategory]

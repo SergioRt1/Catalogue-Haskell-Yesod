@@ -12,18 +12,18 @@
                 <th> Specifications
                 <th> Price
 
-        $forall Entity _ product <- products
             <tbody>
-                <tr>
-                    <td>
-                        #{productName product}
-                    <td>
-                        #{productDescription product}
-                    <td>
-                        #{productCategory product}
-                    <td>
-                        #{productSpecifications product}
-                    <td>
-                        #{productPrice product}
+                $forall Entity _ product <- products
+                    <tr>
+                        <td>
+                            #{productName product}
+                        <td>
+                            #{productDescription product}
+                        <td>
+                            #{productCategory product}
+                        <td>
+                            #{productSpecifications product}
+                        <td>
+                            #{productPrice product}
 
 

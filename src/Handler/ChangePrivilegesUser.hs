@@ -7,7 +7,6 @@
 module Handler.ChangePrivilegesUser where
 
 import Import
-import Database.Persist.Sql (rawSql)
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
 data PrivilegesUser = PrivilegesUser
