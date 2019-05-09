@@ -7,11 +7,12 @@
 {-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module Foundation where
 
 import Import.NoFoundation
-import Database.Persist.Sql (ConnectionPool, runSqlPool)
+import Database.Persist.Sql (ConnectionPool, runSqlPool, rawSql)
 import Text.Hamlet          (hamletFile)
 import Text.Jasmine         (minifym)
 import Control.Monad.Logger (LogSource)
@@ -19,6 +20,7 @@ import Control.Monad.Logger (LogSource)
 -- Used only when in "auth-dummy-login" setting is enabled.
 import Yesod.Auth.Dummy
 import Yesod.Auth.OAuth2.Google
+import Yesod.Auth.OAuth2 (getAccessToken, getUserResponseJSON)
 
 import Yesod.Auth.OpenId    (authOpenId, IdentifierType (Claimed))
 import Yesod.Default.Util   (addStaticContentExternal)
@@ -49,6 +51,14 @@ data MenuItem = MenuItem
 data MenuTypes
     = NavbarLeft MenuItem
     | NavbarRight MenuItem
+
+data GoogleUser
+    = GoogleUser
+    { name :: Text
+    , email :: Text
+    }
+    deriving Generic
+instance FromJSON GoogleUser
 
 -- Replace with Google client ID.
 clientId :: Text
@@ -176,7 +186,6 @@ instance Yesod App where
     isAuthorized FaviconR _ = return Authorized
     isAuthorized RobotsR _ = return Authorized
     isAuthorized (StaticR _) _ = return Authorized
-    isAuthorized CreateUserR  _ = return Authorized
 
     -- the profile route requires that the user is authenticated, so we
     -- delegate to that function
@@ -256,7 +265,7 @@ instance YesodAuth App where
 
     -- Where to send a user after successful login
     loginDest :: App -> Route App
-    loginDest _ = HomeR
+    loginDest _ = ProductsR
     -- Where to send a user after logout
     logoutDest :: App -> Route App
     logoutDest _ = HomeR
@@ -267,12 +276,14 @@ instance YesodAuth App where
     authenticate :: (MonadHandler m, HandlerSite m ~ App)
                  => Creds App -> m (AuthenticationResult App)
     authenticate creds = liftHandler $ runDB $ do
-        x <- getBy $ UniqueUser $ credsIdent creds
+        let Right user = getUserResponseJSON creds
+        x <- getBy $ UniqueUser $ email user
         case x of
             Just (Entity uid _) -> return $ Authenticated uid
             Nothing -> Authenticated <$> insert User
-                { userIdent = credsIdent creds
+                { userIdent = email user
                 , userPassword = Nothing
+                , userName = name user
                 , userPerms = [PrvSearch]
                 }
 

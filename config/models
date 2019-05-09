@@ -6,6 +6,7 @@ User
     password Text Maybe
     UniqueUser ident
     perms [Privileges]
+    name Text
     deriving Typeable
 Email
     email Text
@@ -27,9 +28,4 @@ Product
     specifications Text
     price Double
     category Text
-    deriving Show
-UserAccount
-    email Text
-    name Text
-    password Text
     deriving Show

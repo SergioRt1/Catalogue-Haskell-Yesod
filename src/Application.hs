@@ -44,10 +44,9 @@ import Handler.Common
 import Handler.Home
 import Handler.Comment
 import Handler.Profile
-import Handler.CreateUser
 import Handler.CreateProduct
 import Handler.CreateCategory
-import Handler.CreateCategory
+import Handler.ChangePrivilegesUser
 import Handler.ProductSearch
 import Handler.Products
 

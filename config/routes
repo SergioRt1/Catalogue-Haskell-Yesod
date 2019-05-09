@@ -13,14 +13,12 @@
 
 /profile ProfileR GET
 
-/productSearch ProductSearchR GET POST
+/products ProductsR GET
 
-/createUser CreateUserR GET POST
+/productSearch ProductSearchR GET POST
 
 /createCategory CreateCategoryR GET POST
 
 /createProduct CreateProductR GET POST
-
-/products ProductsR GET
 
 /changePrivilegesUser ChangePrivilegesUserR GET POST

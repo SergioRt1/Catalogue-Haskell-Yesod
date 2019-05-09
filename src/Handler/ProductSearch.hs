@@ -11,7 +11,7 @@ import Import
 import Yesod.Form.Bootstrap3 (BootstrapFormLayout (..), renderBootstrap3)
 
 data Search = Search {
-    name :: Maybe Text,
+    searchProductName :: Maybe Text,
     category :: Maybe Text
  }
 
@@ -40,12 +40,12 @@ postProductSearchR = do
                 ((result,widget), encoding) <- runFormPost $ renderBootstrap3 BootstrapBasicForm $ searchForm Nothing
                 case result of
                     FormSuccess values -> do
-                              if name values /= Nothing && category values /= Nothing then do
-                                 products <- runDB $ selectList [ProductName ==. (des (name values)), ProductCategory ==. (des (category values))] []
+                              if searchProductName values /= Nothing && category values /= Nothing then do
+                                 products <- runDB $ selectList [ProductName ==. (des (searchProductName values)), ProductCategory ==. (des (category values))] []
                                  defaultLayout $ do
                                    $(widgetFile "Product/List")
-                              else if name values /= Nothing then do
-                                 products <- runDB $ selectList [ProductName ==. (des (name values))] []
+                              else if searchProductName values /= Nothing then do
+                                 products <- runDB $ selectList [ProductName ==. (des (searchProductName values))] []
                                  defaultLayout $ do
                                    $(widgetFile "Product/List")
                               else do
